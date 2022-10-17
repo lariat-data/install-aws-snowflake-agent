@@ -1,0 +1,7 @@
+databases:
+  LARIAT_SNOWFLAKE_TEST:
+    PUBLIC:
+    - BANK_ACCOUNTS
+
+source_id:
+  lariat-snowflake-org1-us-east-2

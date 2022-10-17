@@ -1,0 +1,57 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:CreateBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${s3_agent_config_bucket}/*",
+                "arn:aws:s3:::${s3_agent_config_bucket}",
+                "arn:aws:s3:::${s3_query_results_bucket}/*",
+                "arn:aws:s3:::${s3_query_results_bucket}"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${s3_agent_config_bucket}",
+                "arn:aws:s3:::${s3_query_results_bucket}"
+            ]
+        },
+        {
+            "Sid": "VisualEditor4",
+            "Effect": "Allow",
+            "Action": "s3:ListBucket",
+            "Resource": "arn:aws:s3:::*"
+        },
+        {
+            "Sid": "VisualEditor5",
+            "Effect": "Allow",
+            "Action": "s3:GetObject",
+            "Resource": "arn:aws:s3:::*"
+        },
+        {
+            "Sid": "VisualEditor6",
+            "Effect": "Allow",
+            "Action": [
+                "s3:ListBucketMultipartUploads",
+                "s3:AbortMultipartUpload",
+                "s3:ListBucket",
+                "s3:GetBucketLocation",
+                "s3:ListMultipartUploadParts"
+            ],
+            "Resource": [
+                "arn:aws:s3:::${s3_query_results_bucket}/*",
+                "arn:aws:s3:::${s3_query_results_bucket}"
+            ]
+        }
+    ]
+}
