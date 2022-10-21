@@ -1,31 +1,3 @@
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.0"
-    }
-
-    time = {
-      source  = "hashicorp/time"
-    }
-    null = {
-      source  = "hashicorp/null"
-    }
-
-    snowflake = {
-      source = "Snowflake-Labs/snowflake"
-      version = "0.46.0"
-    }
-    snowsql = {
-      source = "aidanmelen/snowsql"
-      version = "1.0.1"
-    }
-    random = {
-      source = "hashicorp/random"
-    }
-  }
-}
-
 locals {
     today  = timestamp()
     lambda_heartbeat_time   = timeadd(local.today, "5m")
@@ -37,56 +9,9 @@ locals {
     lariat_vendor_tag_aws = var.lariat_vendor_tag_aws != "" ? var.lariat_vendor_tag_aws : "lariat-${var.aws_region}"
 }
 
-provider "time" {}
-provider "null" {}
-
-variable "aws_region" {
-  type = string
-  default = "us-east-1"
-}
-
-variable "s3_query_results_bucket" {
-  type = string
-}
-
-variable "s3_agent_config_bucket" {
-  type = string
-}
-
-variable "lariat_api_key" {
-  type = string
-}
-
-variable "lariat_application_key" {
-  type = string
-}
-
-variable "query_dispatch_interval_cron" {
-  type = string
-}
-
-variable "lariat_vendor_tag_aws" {
-  type = string
-  default = ""
-}
-
-# Configure default the AWS Provider
-provider "aws" {
-  region = var.aws_region
-  default_tags {
-    tags = {
-      VendorLariat = local.lariat_vendor_tag_aws
-    }
-  }
-}
-
 data "aws_caller_identity" "current" {}
 
 # Configure the alternate AWS Provider used for lambda.CreateFunction
-resource "aws_iam_user" "lambda_create_user" {
-  name = "lariat-snowflake-lambda-create-user"
-}
-
 data "aws_iam_policy_document" "lariat_lambda_kms_create_user_key_policy" {
   statement {
     actions = ["kms:*"]
@@ -107,7 +32,7 @@ data "aws_iam_policy_document" "lariat_lambda_kms_create_user_key_policy" {
     resources = ["*"]
     principals {
       type = "AWS"
-      identifiers = [aws_iam_user.lambda_create_user.arn]
+      identifiers = [var.lambda_create_user_arn]
     }
   }
 }
@@ -132,28 +57,13 @@ data "aws_iam_policy_document" "lariat_lambda_create_user_policy" {
 
 resource "aws_iam_user_policy" "lambda_create_user_policy" {
   name = "lariat-snowflake-lambda-create-user"
-  user = aws_iam_user.lambda_create_user.name
+  user = var.lambda_create_user_name
   policy = data.aws_iam_policy_document.lariat_lambda_create_user_policy.json
 }
 
 resource "aws_iam_user_policy_attachment" "lambda_create_user_lambda_access" {
-  user = aws_iam_user.lambda_create_user.name
+  user = var.lambda_create_user_name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
-}
-
-resource "aws_iam_access_key" "lambda_create_user_keys" {
-  user = aws_iam_user.lambda_create_user.name
-}
-
-
-provider "aws" {
-  alias = "lambda_create_user"
-  region = var.aws_region
-  access_key = aws_iam_access_key.lambda_create_user_keys.id
-  secret_key = aws_iam_access_key.lambda_create_user_keys.secret
-
-  skip_credentials_validation = true
-  skip_requesting_account_id = true
 }
 
 data "aws_ecr_repository" "lariat_snowflake_agent_repository" {
@@ -271,9 +181,9 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
       LARIAT_OUTPUT_BUCKET = "lariat-batch-agent-sink-staging"
 
       SNOWFLAKE_ACCOUNT =  "${var.snowflake_account_locator}"
-      SNOWFLAKE_USER = "${snowflake_user.lariat_snowflake_user.name}"
-      SNOWFLAKE_PASSWORD = "${random_password.lariat_snowflake_user_password.result}"
-      SNOWFLAKE_WAREHOUSE = "${snowflake_warehouse.lariat_snowflake_warehouse.name}"
+      SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
+      SNOWFLAKE_PASSWORD = "${var.lariat_snowflake_user_password}"
+      SNOWFLAKE_WAREHOUSE = "${var.lariat_snowflake_warehouse_name}"
     }
   }
 }

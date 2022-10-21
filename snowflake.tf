@@ -1,32 +1,3 @@
-variable "snowflake_account" {
-  type = string
-}
-
-variable "snowflake_region" {
-  type = string
-}
-
-variable "snowflake_user" {
-  type = string
-}
-
-variable "snowflake_default_warehouse" {
-  type = string
-}
-
-variable "snowflake_password" {
-  type = string
-  sensitive = true
-}
-
-variable "snowflake_databases" {
-  type = list
-}
-
-variable "snowflake_account_locator" {
-  type = string
-}
-
 provider "snowsql" {
   username = var.snowflake_user
   password = var.snowflake_password
