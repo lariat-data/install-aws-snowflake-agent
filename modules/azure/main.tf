@@ -35,8 +35,10 @@ resource "azurerm_linux_function_app" "example" {
     application_stack {
       docker {
         registry_url = "hub.docker.com"
-        image_name = "talwai/azurefunctionsimage"
-        image_tag = "v1.0.0"
+        image_name = "vikaslariat/lariat-snowflake-azure"
+        image_tag = "latest"
+        registry_username = "vikaslariat"
+        registry_password = "lariatsnowflake"
       }
     }
   }
