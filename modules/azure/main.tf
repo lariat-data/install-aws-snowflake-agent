@@ -48,7 +48,7 @@ resource "azurerm_linux_function_app" "example" {
       docker {
         registry_url = "docker.io"
         image_name = "vikaslariat/lariat-snowflake-azure"
-        image_tag = "test-update-1"
+        image_tag = "tested"
         registry_username = "vikaslariat"
         registry_password = "lariatsnowflake"
       }
