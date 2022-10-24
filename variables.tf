@@ -60,3 +60,7 @@ variable "snowflake_databases" {
 variable "snowflake_account_locator" {
   type = string
 }
+
+variable "azure_region" {
+  type = string
+}

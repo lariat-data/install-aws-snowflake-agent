@@ -22,6 +22,10 @@ terraform {
     null = {
       source  = "hashicorp/null"
     }
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "3.28.0"
+    }
   }
 }
 
@@ -42,6 +46,11 @@ provider "aws" {
   }
 }
 
+# Configure the Microsoft Azure Provider
+provider "azurerm" {
+  features {}
+}
+
 resource "aws_iam_user" "lambda_create_user" {
   count = var.cloud == "aws" ? 1 : 0
   name = "lariat-snowflake-lambda-create-user"
@@ -55,8 +64,8 @@ resource "aws_iam_access_key" "lambda_create_user_keys" {
 provider "aws" {
   alias = "lambda_create_user"
   region = var.aws_region
-  access_key = aws_iam_access_key.lambda_create_user_keys[0].id
-  secret_key = aws_iam_access_key.lambda_create_user_keys[0].secret
+  access_key = var.cloud == "aws" ? aws_iam_access_key.lambda_create_user_keys[0].id : ""
+  secret_key = var.cloud == "aws" ? aws_iam_access_key.lambda_create_user_keys[0].secret : ""
 
   skip_credentials_validation = true
   skip_requesting_account_id = true
@@ -89,4 +98,18 @@ module "aws_snowflake_lariat_installation" {
   lariat_snowflake_warehouse_name = snowflake_warehouse.lariat_snowflake_warehouse.name
 
   snowflake_account_locator = var.snowflake_account_locator
+}
+
+module "azure_snowflake_lariat_installation" {
+  source = "./modules/azure"
+  count = var.cloud == "azure" ? 1 : 0
+
+  lariat_application_key = var.lariat_application_key
+  lariat_api_key = var.lariat_api_key
+  lariat_snowflake_user_name = snowflake_user.lariat_snowflake_user.name
+  lariat_snowflake_user_password = random_password.lariat_snowflake_user_password.result
+  lariat_snowflake_warehouse_name = snowflake_warehouse.lariat_snowflake_warehouse.name
+
+  snowflake_account_locator = var.snowflake_account_locator
+  azure_region = var.azure_region
 }

@@ -21,3 +21,7 @@ variable "lariat_snowflake_warehouse_name" {
 variable "snowflake_account_locator" {
   type = string
 }
+
+variable "azure_region" {
+  type = string
+}

@@ -21,6 +21,7 @@ S3_AGENT_CONFIG_BUCKET="lariat-snowflake-default-config"
 QUERY_DISPATCH_INTERVAL_CRON="cron(48 * * * ? *)"
 
 AWS_REGION="us-east-2"
+AZURE_REGION = "Central US"
 
 def get_snowflake_databases():
     con = snowflake.connector.connect(
@@ -60,6 +61,7 @@ def install_lariat_to_databases(cloud="aws"):
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
         "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
+        "TF_VAR_azure_region": AZURE_REGION,
     }
 
     my_env = os.environ.copy()
@@ -91,6 +93,7 @@ def destroy_lariat_installations(cloud="aws"):
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
         "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
+        "TF_VAR_azure_region": AZURE_REGION,
     }
 
     my_env = os.environ.copy()
@@ -122,6 +125,7 @@ def plan_lariat_installation(cloud="aws"):
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
         "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
+        "TF_VAR_azure_region": AZURE_REGION,
     }
 
     my_env = os.environ.copy()
