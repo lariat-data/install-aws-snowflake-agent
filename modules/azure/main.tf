@@ -39,6 +39,10 @@ resource "azurerm_linux_function_app" "example" {
   service_plan_id            = azurerm_service_plan.lariat_app_service_plan.id
   builtin_logging_enabled = true
 
+  app_settings = {
+    WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
+  }
+
   site_config {
     always_on = true
     application_insights_connection_string = azurerm_application_insights.lariat_application_insights.connection_string
@@ -57,6 +61,7 @@ resource "azurerm_linux_function_app" "example" {
     app_service_logs {
       disk_quota_mb = 35
     }
+
   }
 }
 
