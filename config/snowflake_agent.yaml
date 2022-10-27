@@ -4,4 +4,4 @@ databases:
     - BANK_ACCOUNTS
 
 source_id:
-  lariat-snowflake-org1-us-east-2
+  snowflake_azure_central_us

@@ -21,6 +21,19 @@ resource "azurerm_storage_account" "lariat_storage_account" {
   account_replication_type = "LRS"
 }
 
+resource "azurerm_storage_container" "lariat_storage_container" {
+  name = "lariat-storage-container"
+  storage_account_name = azurerm_storage_account.lariat_storage_account.name
+}
+
+resource "azurerm_storage_blob" "lariat_snowflake_agent_config" {
+  name                   = "lariat_snowflake_agent_config.yaml"
+  storage_account_name   = azurerm_storage_account.lariat_storage_account.name
+  storage_container_name = azurerm_storage_container.lariat_storage_container.name
+  type                   = "Block"
+  source                 = "config/snowflake_agent.yaml"
+}
+
 resource "azurerm_application_insights" "lariat_application_insights" {
   name                = "lariat-monitoring-appinsights"
   location            = azurerm_resource_group.lariat_resource_group.location
@@ -41,6 +54,9 @@ resource "azurerm_linux_function_app" "example" {
 
   app_settings = {
     WEBSITES_ENABLE_APP_SERVICE_STORAGE = false
+    AZURE_STORAGE_CONTAINER = azurerm_storage_container.lariat_storage_container.name
+    AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.lariat_storage_account.primary_blob_connection_string
+    CLOUD_AGENT_CONFIG_PATH = azurerm_storage_blob.lariat_snowflake_agent_config.name
   }
 
   site_config {
@@ -52,7 +68,7 @@ resource "azurerm_linux_function_app" "example" {
       docker {
         registry_url = "docker.io"
         image_name = "vikaslariat/lariat-snowflake-azure"
-        image_tag = "latest-1"
+        image_tag = "latest-4"
         registry_username = "vikaslariat"
         registry_password = "lariatsnowflake"
       }
@@ -61,7 +77,13 @@ resource "azurerm_linux_function_app" "example" {
     app_service_logs {
       disk_quota_mb = 35
     }
+  }
 
+  lifecycle {
+    ignore_changes = [
+      tags["hidden-link: /app-insights-instrumentation-key"],
+      tags["hidden-link: /app-insights-conn-string"],
+      tags["hidden-link: /app-insights-resource-id"]
+    ]
   }
 }
-
