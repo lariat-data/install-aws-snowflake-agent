@@ -112,18 +112,42 @@ resource snowsql_exec "lariat_read_only_grants" {
   }
 }
 
-resource snowsql_exec "lariat_snowflake_sketch_udf_import" {
-  name = "lariat-snowflake-sketch-udf-import"
+resource snowsql_exec "lariat_snowflake_stage" {
+  for_each = toset(var.snowflake_databases)
+  name = "lariat-snowflake-stage-${each.key}"
 
   create {
     statements = <<-EOT
-    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @~ auto_compress=false OVERWRITE=true;
+    USE DATABASE ${each.key};
+    CREATE OR REPLACE STAGE lariat_stage;
+
+    GRANT READ ON STAGE lariat_stage TO ROLE "${lower(snowflake_role.lariat_snowflake_role.name)}";
     EOT
   }
 
     delete {
     statements = <<-EOT
-    rm @~ pattern='*agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar';
+    USE DATABASE ${each.key};
+    DROP STAGE IF EXISTS lariat_stage;
+    EOT
+  }
+}
+
+resource snowsql_exec "lariat_snowflake_sketch_udf_import" {
+  name = "lariat-snowflake-sketch-udf-import"
+  depends_on = [
+    snowsql_exec.lariat_snowflake_stage
+  ]
+
+  create {
+    statements = <<-EOT
+    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @lariat_stage auto_compress=false OVERWRITE=true;
+    EOT
+  }
+
+    delete {
+    statements = <<-EOT
+    rm @lariat_stage pattern='.*agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar.*';
     EOT
   }
 }
@@ -141,12 +165,12 @@ resource snowsql_exec "lariat_snowflake_sketch_udf_create" {
     create or replace function hllpp_count_strings_sketch(x string)
     returns table(sketch binary)
     language java
-    imports = ('@~/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar')
+    imports = ('@lariat_stage/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar')
     handler='com.lariat.agentudfs.HLPPCountStringsSketch';
     create or replace function hll_merge(x array)
     returns binary
     language java
-    imports = ('@~/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar')
+    imports = ('@lariat_stage/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar')
     handler='com.lariat.agentudfs.HLPPMerge.merge';
     GRANT USAGE ON FUNCTION hllpp_count_strings_sketch(string) TO ROLE "${lower(snowflake_role.lariat_snowflake_role.name)}";
     GRANT USAGE ON FUNCTION hll_merge(array) TO ROLE "${lower(snowflake_role.lariat_snowflake_role.name)}";
@@ -156,8 +180,8 @@ resource snowsql_exec "lariat_snowflake_sketch_udf_create" {
     delete {
     statements = <<-EOT
     use database ${each.key};
-    DROP FUNCTION hllpp_count_strings_sketch(string);
-    DROP FUNCTION hll_merge(string);
+    DROP FUNCTION IF EXISTS hllpp_count_strings_sketch(string);
+    DROP FUNCTION IF EXISTS hll_merge(array);
     EOT
   }
 }
