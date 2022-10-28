@@ -112,6 +112,56 @@ resource snowsql_exec "lariat_read_only_grants" {
   }
 }
 
+resource snowsql_exec "lariat_snowflake_sketch_udf_import" {
+  name = "lariat-snowflake-sketch-udf-import"
+
+  create {
+    statements = <<-EOT
+    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @~ auto_compress=false OVERWRITE=true;
+    EOT
+  }
+
+    delete {
+    statements = <<-EOT
+    rm @~ pattern='*agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar';
+    EOT
+  }
+}
+
+resource snowsql_exec "lariat_snowflake_sketch_udf_create" {
+  for_each = toset(var.snowflake_databases)
+  name = "lariat-snowflake-sketch-udf-function-${each.key}"
+  depends_on = [
+    snowsql_exec.lariat_snowflake_sketch_udf_import
+  ]
+
+  create {
+    statements = <<-EOT
+    use database ${each.key};
+    create or replace function hllpp_count_strings_sketch(x string)
+    returns table(sketch binary)
+    language java
+    imports = ('@~/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar')
+    handler='com.lariat.agentudfs.HLPPCountStringsSketch';
+    create or replace function hll_merge(x array)
+    returns binary
+    language java
+    imports = ('@~/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar')
+    handler='com.lariat.agentudfs.HLPPMerge.merge';
+    GRANT USAGE ON FUNCTION hllpp_count_strings_sketch(string) TO ROLE "${lower(snowflake_role.lariat_snowflake_role.name)}";
+    GRANT USAGE ON FUNCTION hll_merge(array) TO ROLE "${lower(snowflake_role.lariat_snowflake_role.name)}";
+    EOT
+  }
+
+    delete {
+    statements = <<-EOT
+    use database ${each.key};
+    DROP FUNCTION hllpp_count_strings_sketch(string);
+    DROP FUNCTION hll_merge(string);
+    EOT
+  }
+}
+
 output lariat_snowflake_user_password {
   value     = random_password.lariat_snowflake_user_password.result
   sensitive = true
