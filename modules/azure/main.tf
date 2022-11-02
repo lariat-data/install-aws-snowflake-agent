@@ -57,6 +57,14 @@ resource "azurerm_linux_function_app" "example" {
     AZURE_STORAGE_CONTAINER = azurerm_storage_container.lariat_storage_container.name
     AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.lariat_storage_account.primary_blob_connection_string
     CLOUD_AGENT_CONFIG_PATH = azurerm_storage_blob.lariat_snowflake_agent_config.name
+
+    LARIAT_API_KEY = var.lariat_api_key
+    LARIAT_APPLICATION_KEY = var.lariat_application_key
+
+    SNOWFLAKE_ACCOUNT =  "${var.snowflake_account_locator}"
+    SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
+    SNOWFLAKE_PASSWORD = "${var.lariat_snowflake_user_password}"
+    SNOWFLAKE_WAREHOUSE = "${var.lariat_snowflake_warehouse_name}"
   }
 
   site_config {
