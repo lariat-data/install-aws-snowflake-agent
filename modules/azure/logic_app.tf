@@ -65,6 +65,6 @@ resource "azurerm_logic_app_action_custom" "lariat_indicator_query_action" {
 resource "azurerm_logic_app_trigger_recurrence" "lariat_daily_indicator_query" {
   name         = "lariat-frequent-indicator-query"
   logic_app_id = azurerm_logic_app_workflow.lariat_monitoring_workflow_indicator_query.id
-  frequency    = "Day"
-  interval     = 1
+  frequency    = "Minute"
+  interval     = 5
 }
