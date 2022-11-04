@@ -65,7 +65,6 @@ resource "azurerm_linux_function_app" "example" {
     SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
     SNOWFLAKE_PASSWORD = "${var.lariat_snowflake_user_password}"
     SNOWFLAKE_WAREHOUSE = "${var.lariat_snowflake_warehouse_name}"
-    SNOWFLAKE_DB = "LARIAT_SNOWFLAKE_TEST"
   }
 
   site_config {
@@ -77,7 +76,7 @@ resource "azurerm_linux_function_app" "example" {
       docker {
         registry_url = "docker.io"
         image_name = "vikaslariat/lariat-snowflake-azure"
-        image_tag = "latest-7"
+        image_tag = "latest-9"
         registry_username = "vikaslariat"
         registry_password = "lariatsnowflake"
       }
