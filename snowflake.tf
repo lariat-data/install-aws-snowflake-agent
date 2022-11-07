@@ -142,7 +142,7 @@ resource snowsql_exec "lariat_snowflake_sketch_udf_import" {
 
   create {
     statements = <<-EOT
-    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @${each.key}.lariat_stage auto_compress=false OVERWRITE=true;
+    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @${each.key}.PUBLIC.lariat_stage auto_compress=false OVERWRITE=true;
     EOT
   }
 
