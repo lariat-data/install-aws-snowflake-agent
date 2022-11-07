@@ -32,6 +32,7 @@ resource "azurerm_storage_blob" "lariat_snowflake_agent_config" {
   storage_container_name = azurerm_storage_container.lariat_storage_container.name
   type                   = "Block"
   source                 = "config/snowflake_agent.yaml"
+  content_md5            = filemd5("config/snowflake_agent.yaml")
 }
 
 resource "azurerm_application_insights" "lariat_application_insights" {
@@ -76,7 +77,7 @@ resource "azurerm_linux_function_app" "example" {
       docker {
         registry_url = "docker.io"
         image_name = "vikaslariat/lariat-snowflake-azure"
-        image_tag = "latest-9"
+        image_tag = "latest-14"
         registry_username = "vikaslariat"
         registry_password = "lariatsnowflake"
       }

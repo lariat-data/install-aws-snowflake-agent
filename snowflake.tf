@@ -134,19 +134,22 @@ resource snowsql_exec "lariat_snowflake_stage" {
 }
 
 resource snowsql_exec "lariat_snowflake_sketch_udf_import" {
-  name = "lariat-snowflake-sketch-udf-import"
+  for_each = toset(var.snowflake_databases)
+  name = "lariat-snowflake-sketch-udf-import-${each.key}"
   depends_on = [
     snowsql_exec.lariat_snowflake_stage
   ]
 
   create {
     statements = <<-EOT
+    use database ${each.key};
     put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @lariat_stage auto_compress=false OVERWRITE=true;
     EOT
   }
 
     delete {
     statements = <<-EOT
+    use database ${each.key};
     rm @lariat_stage pattern='.*agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar.*';
     EOT
   }
