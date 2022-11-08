@@ -25,9 +25,33 @@ resource snowflake_warehouse "lariat_snowflake_warehouse" {
   auto_resume = true
 }
 
+resource snowflake_database "lariat_meta_database" {
+  name = "lariat_meta_db"
+}
+
+resource snowflake_schema "lariat_meta_db_schema" {
+  database = snowflake_database.lariat_meta_database.name
+  name     = "lariat"
+}
+
 resource snowflake_role "lariat_snowflake_role" {
   name           = "lariat_snowflake_role"
   comment        = "role for running lariat monitoring queries"
+}
+
+resource "snowflake_database_grant" "lariat_meta_db_grant" {
+  database_name = snowflake_database.lariat_meta_database.name
+
+  privilege = "USAGE"
+  roles     = [snowflake_role.lariat_snowflake_role.name]
+}
+
+resource "snowflake_schema_grant" "lariat_meta_schema_grant" {
+  database_name = snowflake_database.lariat_meta_database.name
+  schema_name   = snowflake_schema.lariat_meta_db_schema.name
+
+  privilege = "USAGE"
+  roles     = [snowflake_role.lariat_snowflake_role.name]
 }
 
 resource snowflake_warehouse_grant "lariat_snowflake_warehouse_grant_operate" {
@@ -113,12 +137,15 @@ resource snowsql_exec "lariat_read_only_grants" {
 }
 
 resource snowsql_exec "lariat_snowflake_stage" {
-  for_each = toset(var.snowflake_databases)
-  name = "lariat-snowflake-stage-${each.key}"
+  name = "lariat-snowflake-stage"
+  depends_on = [
+    snowflake_schema.lariat_meta_db_schema
+  ]
 
   create {
     statements = <<-EOT
-    USE DATABASE ${each.key};
+    USE DATABASE "${snowflake_database.lariat_meta_database.name}";
+    USE SCHEMA "${snowflake_schema.lariat_meta_db_schema.name}";
     CREATE OR REPLACE STAGE lariat_stage;
 
     GRANT READ ON STAGE lariat_stage TO ROLE "${lower(snowflake_role.lariat_snowflake_role.name)}";
@@ -127,43 +154,44 @@ resource snowsql_exec "lariat_snowflake_stage" {
 
     delete {
     statements = <<-EOT
-    USE DATABASE ${each.key};
+    USE DATABASE "${snowflake_database.lariat_meta_database.name}";
+    USE SCHEMA "${snowflake_schema.lariat_meta_db_schema.name}";
     DROP STAGE IF EXISTS lariat_stage;
     EOT
   }
 }
 
 resource snowsql_exec "lariat_snowflake_sketch_udf_import" {
-  for_each = toset(var.snowflake_databases)
-  name = "lariat-snowflake-sketch-udf-import-${each.key}"
+  name = "lariat-snowflake-sketch-udf-import"
   depends_on = [
     snowsql_exec.lariat_snowflake_stage
   ]
 
   create {
     statements = <<-EOT
-    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @${each.key}.PUBLIC.lariat_stage auto_compress=false OVERWRITE=true;
+    put 'file://${path.cwd}/artifacts/java/agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar' @"${snowflake_database.lariat_meta_database.name}"."${snowflake_schema.lariat_meta_db_schema.name}".lariat_stage auto_compress=false OVERWRITE=true;
     EOT
   }
 
     delete {
     statements = <<-EOT
-    use database ${each.key};
+    USE DATABASE "${snowflake_database.lariat_meta_database.name}";
+    USE SCHEMA "${snowflake_schema.lariat_meta_db_schema.name}";
     rm @lariat_stage pattern='.*agent-udfs-0.1-SNAPSHOT-jar-with-dependencies.jar.*';
     EOT
   }
 }
 
 resource snowsql_exec "lariat_snowflake_sketch_udf_create" {
-  for_each = toset(var.snowflake_databases)
-  name = "lariat-snowflake-sketch-udf-function-${each.key}"
+  name = "lariat-snowflake-sketch-udf-function"
   depends_on = [
     snowsql_exec.lariat_snowflake_sketch_udf_import
   ]
 
   create {
     statements = <<-EOT
-    use database ${each.key};
+    USE DATABASE "${snowflake_database.lariat_meta_database.name}";
+    USE SCHEMA "${snowflake_schema.lariat_meta_db_schema.name}";
     create or replace function hllpp_count_strings_sketch(x string)
     returns table(sketch binary)
     language java
@@ -181,7 +209,8 @@ resource snowsql_exec "lariat_snowflake_sketch_udf_create" {
 
     delete {
     statements = <<-EOT
-    use database ${each.key};
+    USE DATABASE "${snowflake_database.lariat_meta_database.name}";
+    USE SCHEMA "${snowflake_schema.lariat_meta_db_schema.name}";
     DROP FUNCTION IF EXISTS hllpp_count_strings_sketch(string);
     DROP FUNCTION IF EXISTS hll_merge(array);
     EOT
