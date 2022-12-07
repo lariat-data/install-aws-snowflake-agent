@@ -21,8 +21,8 @@ S3_QUERY_RESULTS_BUCKET = "lariat-snowflak-default-query-results"
 S3_AGENT_CONFIG_BUCKET = "lariat-snowflake-default-config"
 QUERY_DISPATCH_INTERVAL_CRON = "cron(48 * * * ? *)"
 
-AWS_REGION = "us-east-2"
-AZURE_REGION = "Central US"
+AWS_REGION = os.getenv("AWS_REGION")
+AZURE_REGION = os.getenv("AZURE_REGION")
 
 YAML_LOCATION = "config/snowflake_agent.yaml"
 
