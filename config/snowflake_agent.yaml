@@ -1,13 +1,10 @@
 databases:
-  LARIAT_SNOWFLAKE_TEST:
-    PUBLIC:
-    - BANK_ACCOUNTS
-  LARIAT_SNOWFLAKE_TEST_2:
-    PUBLIC_2:
-    - BANK_ACCOUNTS_2
-  LARIAT_SNOWFLAKE_TEST_3:
-    PUBLIC_3:
-    - BANK_ACCOUNTS_3
+  my_database:
+    my_schema:
+    - my_table
+  my_other_database:
+    my_other_schema:
+    - my_other_tabl
 
 source_id:
   my_snowflake_source
