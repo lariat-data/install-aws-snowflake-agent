@@ -91,10 +91,15 @@ def install_lariat_to_databases(cloud="aws"):
         "TF_VAR_s3_query_results_bucket": S3_QUERY_RESULTS_BUCKET,
         "TF_VAR_s3_agent_config_bucket": S3_AGENT_CONFIG_BUCKET,
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
-        "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
-        "TF_VAR_azure_region": AZURE_REGION,
     }
+
+    if cloud == "aws":
+        tf_env["TF_VAR_aws_region"] = AWS_REGION
+        tf_env["TF_VAR_azure_region"] = ""
+    elif cloud == "azure":
+        tf_env["TF_VAR_azure_region"] = AZURE_REGION
+        tf_env["TF_VAR_aws_region"] = ""
 
     my_env = os.environ.copy()
     for k, v in tf_env.items():
@@ -126,10 +131,15 @@ def destroy_lariat_installations(cloud="aws"):
         "TF_VAR_s3_query_results_bucket": S3_QUERY_RESULTS_BUCKET,
         "TF_VAR_s3_agent_config_bucket": S3_AGENT_CONFIG_BUCKET,
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
-        "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
-        "TF_VAR_azure_region": AZURE_REGION,
     }
+
+    if cloud == "aws":
+        tf_env["TF_VAR_aws_region"] = AWS_REGION
+        tf_env["TF_VAR_azure_region"] = ""
+    elif cloud == "azure":
+        tf_env["TF_VAR_azure_region"] = AZURE_REGION
+        tf_env["TF_VAR_aws_region"] = ""
 
     my_env = os.environ.copy()
     for k, v in tf_env.items():
@@ -161,10 +171,16 @@ def plan_lariat_installation(cloud="aws"):
         "TF_VAR_s3_query_results_bucket": S3_QUERY_RESULTS_BUCKET,
         "TF_VAR_s3_agent_config_bucket": S3_AGENT_CONFIG_BUCKET,
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
-        "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
-        "TF_VAR_azure_region": AZURE_REGION,
     }
+
+    if cloud == "aws":
+        tf_env["TF_VAR_aws_region"] = AWS_REGION
+        tf_env["TF_VAR_azure_region"] = ""
+    elif cloud == "azure":
+        tf_env["TF_VAR_azure_region"] = AZURE_REGION
+        tf_env["TF_VAR_aws_region"] = ""
+
 
     my_env = os.environ.copy()
     for k, v in tf_env.items():

@@ -1,8 +1,13 @@
 databases:
-  edit_me_database_name:
-    edit_me_schema_name:
-    - edit_me_table_name_1
-    - edit_me_table_name_2
+  LARIAT_SNOWFLAKE_TEST:
+    PUBLIC:
+    - BANK_ACCOUNTS
+  LARIAT_SNOWFLAKE_TEST_2:
+    PUBLIC_2:
+    - BANK_ACCOUNTS_2
+  LARIAT_SNOWFLAKE_TEST_3:
+    PUBLIC_3:
+    - BANK_ACCOUNTS_3
 
 source_id:
   my_snowflake_source

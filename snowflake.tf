@@ -17,7 +17,7 @@ provider "snowflake" {
 }
 
 resource snowflake_warehouse "lariat_snowflake_warehouse" {
-  name           = "lariat_snowflake_warehouse"
+  name           = "lariat_snowflake_warehouse_${random_id.warehouse.hex}"
   comment        = "warehouse for running lariat monitoring queries"
   warehouse_size = "xsmall"
   initially_suspended = true
@@ -25,8 +25,24 @@ resource snowflake_warehouse "lariat_snowflake_warehouse" {
   auto_resume = true
 }
 
+resource "random_id" "meta_db" {
+  byte_length = 2
+}
+
+resource "random_id" "role" {
+  byte_length = 2
+}
+
+resource "random_id" "warehouse" {
+  byte_length = 2
+}
+
+resource "random_id" "user" {
+  byte_length = 2
+}
+
 resource snowflake_database "lariat_meta_database" {
-  name = "lariat_meta_db"
+  name = "lariat_meta_db_${random_id.meta_db.hex}"
 }
 
 resource snowflake_schema "lariat_meta_db_schema" {
@@ -35,7 +51,7 @@ resource snowflake_schema "lariat_meta_db_schema" {
 }
 
 resource snowflake_role "lariat_snowflake_role" {
-  name           = "lariat_snowflake_role"
+  name           = "lariat_snowflake_role_${random_id.role.hex}"
   comment        = "role for running lariat monitoring queries"
 }
 
@@ -94,7 +110,7 @@ resource "random_password" "lariat_snowflake_user_password" {
 }
 
 resource snowflake_user "lariat_snowflake_user" {
-  name           = "lariat_snowflake_user"
+  name           = "lariat_snowflake_user_${random_id.user.hex}"
   password       = random_password.lariat_snowflake_user_password.result
   comment        = "user for running lariat monitoring queries"
 

@@ -66,15 +66,6 @@ resource "aws_iam_user_policy_attachment" "lambda_create_user_lambda_access" {
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
 }
 
-data "aws_ecr_repository" "lariat_snowflake_agent_repository" {
-  name = "lariat-snowflake-agent"
-}
-
-data "aws_ecr_image" "lariat_snowflake_agent_image" {
-  repository_name = data.aws_ecr_repository.lariat_snowflake_agent_repository.name
-  image_tag       = "latest"
-}
-
 resource "aws_s3_bucket" "lariat_snowflake_agent_config_bucket" {
   bucket_prefix = var.s3_agent_config_bucket
   force_destroy = true
@@ -119,11 +110,6 @@ data "aws_iam_policy_document" "lariat_snowflake_agent_repository_policy" {
   }
 }
 
-resource "aws_ecr_repository_policy" "lariat_snowflake_agent_repo_policy" {
-  repository = data.aws_ecr_repository.lariat_snowflake_agent_repository.name
-  policy = data.aws_iam_policy_document.lariat_snowflake_agent_repository_policy.json
-}
-
 resource "aws_iam_policy" "lariat_snowflake_monitoring_policy" {
   name_prefix = "lariat-snowflake-monitoring-policy"
   policy = templatefile("iam/lariat-snowflake-monitoring-policy.json.tftpl", { s3_query_results_bucket = aws_s3_bucket.lariat_snowflake_query_results_bucket.bucket, s3_agent_config_bucket = aws_s3_bucket.lariat_snowflake_agent_config_bucket.bucket, aws_account_id = data.aws_caller_identity.current.account_id })
@@ -161,7 +147,7 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
   provider = aws.lambda_create_user
 
   function_name = "lariat-snowflake-monitoring-lambda"
-  image_uri = "${data.aws_ecr_repository.lariat_snowflake_agent_repository.repository_url}@${data.aws_ecr_image.lariat_snowflake_agent_image.image_digest}"
+  image_uri = "358681817243.dkr.ecr.${var.aws_region}.amazonaws.com/lariat-snowflake-agent@sha256:d238d61b547a8c0910b682d8be239f75c279ad885d2a248834955b96417d5c1a"
   role = aws_iam_role.lariat_snowflake_monitoring_lambda_role.arn
   package_type = "Image"
   memory_size = 512
@@ -177,8 +163,9 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
       LARIAT_API_KEY = var.lariat_api_key
       LARIAT_APPLICATION_KEY = var.lariat_application_key
       S3_AGENT_CONFIG_PATH = "${aws_s3_bucket.lariat_snowflake_agent_config_bucket.bucket}/snowflake_agent.yaml"
-      LARIAT_ENDPOINT = "http://ingest-staging.lariatdata.com/api"
-      LARIAT_OUTPUT_BUCKET = "lariat-batch-agent-sink-staging"
+      CLOUD_AGENT_CONFIG_PATH = "${aws_s3_bucket.lariat_snowflake_agent_config_bucket.bucket}/snowflake_agent.yaml"
+      LARIAT_ENDPOINT = "http://ingest.lariatdata.com/api"
+      LARIAT_OUTPUT_BUCKET = "lariat-batch-agent-sink"
 
       SNOWFLAKE_ACCOUNT =  "${var.snowflake_account_locator}"
       SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
