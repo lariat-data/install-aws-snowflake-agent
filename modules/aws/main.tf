@@ -147,7 +147,7 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
   provider = aws.lambda_create_user
 
   function_name = "lariat-snowflake-monitoring-lambda"
-  image_uri = "358681817243.dkr.ecr.${var.aws_region}.amazonaws.com/lariat-snowflake-agent@sha256:d238d61b547a8c0910b682d8be239f75c279ad885d2a248834955b96417d5c1a"
+  image_uri = "358681817243.dkr.ecr.${var.aws_region}.amazonaws.com/lariat-snowflake-agent:latest"
   role = aws_iam_role.lariat_snowflake_monitoring_lambda_role.arn
   package_type = "Image"
   memory_size = 512
