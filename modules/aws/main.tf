@@ -53,6 +53,15 @@ data "aws_iam_policy_document" "lariat_lambda_create_user_policy" {
 
     resources = [aws_kms_key.lambda_create_user_kms.arn]
   }
+
+  statement {
+    actions = [
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+    ]
+
+    resources = ["arn:aws:ecr:${var.aws_region}:358681817243:repository/lariat-snowflake-agent"]
+  }
 }
 
 resource "aws_iam_user_policy" "lambda_create_user_policy" {
@@ -64,6 +73,11 @@ resource "aws_iam_user_policy" "lambda_create_user_policy" {
 resource "aws_iam_user_policy_attachment" "lambda_create_user_lambda_access" {
   user = var.lambda_create_user_name
   policy_arn = "arn:aws:iam::aws:policy/AWSLambda_FullAccess"
+}
+
+resource "aws_iam_user_policy_attachment" "lambda_create_user_ecr_access" {
+  user = var.lambda_create_user_name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess"
 }
 
 resource "aws_s3_bucket" "lariat_snowflake_agent_config_bucket" {
