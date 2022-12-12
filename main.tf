@@ -35,6 +35,8 @@ provider "null" {}
 # Configure default the AWS Provider
 provider "aws" {
   region = var.aws_region
+  skip_credentials_validation = var.cloud != "aws"
+  skip_requesting_account_id = var.cloud != "aws"
   default_tags {
     tags = {
       VendorLariat = local.lariat_vendor_tag_aws
