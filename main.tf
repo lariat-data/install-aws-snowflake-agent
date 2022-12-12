@@ -88,5 +88,8 @@ module "aws_snowflake_lariat_installation" {
   lariat_snowflake_user_password = random_password.lariat_snowflake_user_password.result
   lariat_snowflake_warehouse_name = snowflake_warehouse.lariat_snowflake_warehouse.name
 
+  lariat_snowflake_meta_db_name = snowflake_database.lariat_meta_database.name
+  lariat_snowflake_meta_schema_name = snowflake_schema.lariat_meta_db_schema.name
+
   snowflake_account_locator = var.snowflake_account_locator
 }

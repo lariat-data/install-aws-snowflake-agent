@@ -185,6 +185,9 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
       SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
       SNOWFLAKE_PASSWORD = "${var.lariat_snowflake_user_password}"
       SNOWFLAKE_WAREHOUSE = "${var.lariat_snowflake_warehouse_name}"
+
+      LARIAT_META_DB = "${var.lariat_snowflake_meta_db_name}"
+      LARIAT_META_SCHEMA = "${var.lariat_snowflake_meta_schema_name}"
     }
   }
 }
