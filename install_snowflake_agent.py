@@ -26,6 +26,9 @@ AZURE_REGION = os.getenv("AZURE_REGION")
 
 YAML_LOCATION = "config/snowflake_agent.yaml"
 
+from dotenv import load_dotenv
+load_dotenv()
+
 def validate_agent_config(cloud):
     yaml = YAML(typ="safe")
 
