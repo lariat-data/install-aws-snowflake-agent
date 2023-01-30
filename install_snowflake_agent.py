@@ -6,26 +6,25 @@ import subprocess
 import snowflake.connector
 from ruamel.yaml import YAML
 
-SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE", "COMPUTE_WH")
+SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
 SNOWFLAKE_ACCOUNT_LOCATOR = os.getenv(
-    "SNOWFLAKE_ACCOUNT_LOCATOR", "CL46984.us-east-2.aws"
+    "SNOWFLAKE_ACCOUNT_LOCATOR"
 )
-SNOWFLAKE_REGION = os.getenv("SNOWFLAKE_REGION", "us-east-2.aws")
-SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT", "CL46984")
-SNOWFLAKE_USER = os.getenv("SNOWFLAKE_USER", "aaditya")
+SNOWFLAKE_REGION = os.getenv("SNOWFLAKE_REGION")
+SNOWFLAKE_ACCOUNT = os.getenv("SNOWFLAKE_ACCOUNT")
+SNOWFLAKE_USER = os.getenv("SNOWFLAKE_USER")
 SNOWFLAKE_PASSWORD = os.environ["SNOWFLAKE_PASSWORD"]
 
-LARIAT_API_KEY = os.getenv("LARIAT_API_KEY", "162814e3ec2236e9e557ac8aa87a44cf")
-LARIAT_APPLICATION_KEY = os.getenv("LARIAT_APPLICATION_KEY", "28488da99d7842c6494aeaf4bf95251b")
+LARIAT_API_KEY = os.getenv("LARIAT_API_KEY")
+LARIAT_APPLICATION_KEY = os.getenv("LARIAT_APPLICATION_KEY")
 S3_QUERY_RESULTS_BUCKET = "lariat-snowflak-default-query-results"
 S3_AGENT_CONFIG_BUCKET = "lariat-snowflake-default-config"
 QUERY_DISPATCH_INTERVAL_CRON = "cron(48 * * * ? *)"
 
-AWS_REGION = "us-east-2"
-AZURE_REGION = "Central US"
+AWS_REGION = os.getenv("AWS_REGION")
+AZURE_REGION = os.getenv("AZURE_REGION")
 
 YAML_LOCATION = "config/snowflake_agent.yaml"
-
 
 def validate_agent_config(cloud):
     yaml = YAML(typ="safe")
@@ -92,10 +91,15 @@ def install_lariat_to_databases(cloud="aws"):
         "TF_VAR_s3_query_results_bucket": S3_QUERY_RESULTS_BUCKET,
         "TF_VAR_s3_agent_config_bucket": S3_AGENT_CONFIG_BUCKET,
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
-        "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
-        "TF_VAR_azure_region": AZURE_REGION,
     }
+
+    if cloud == "aws":
+        tf_env["TF_VAR_aws_region"] = AWS_REGION
+        tf_env["TF_VAR_azure_region"] = ""
+    elif cloud == "azure":
+        tf_env["TF_VAR_azure_region"] = AZURE_REGION
+        tf_env["TF_VAR_aws_region"] = ""
 
     my_env = os.environ.copy()
     for k, v in tf_env.items():
@@ -127,10 +131,15 @@ def destroy_lariat_installations(cloud="aws"):
         "TF_VAR_s3_query_results_bucket": S3_QUERY_RESULTS_BUCKET,
         "TF_VAR_s3_agent_config_bucket": S3_AGENT_CONFIG_BUCKET,
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
-        "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
-        "TF_VAR_azure_region": AZURE_REGION,
     }
+
+    if cloud == "aws":
+        tf_env["TF_VAR_aws_region"] = AWS_REGION
+        tf_env["TF_VAR_azure_region"] = ""
+    elif cloud == "azure":
+        tf_env["TF_VAR_azure_region"] = AZURE_REGION
+        tf_env["TF_VAR_aws_region"] = ""
 
     my_env = os.environ.copy()
     for k, v in tf_env.items():
@@ -162,10 +171,16 @@ def plan_lariat_installation(cloud="aws"):
         "TF_VAR_s3_query_results_bucket": S3_QUERY_RESULTS_BUCKET,
         "TF_VAR_s3_agent_config_bucket": S3_AGENT_CONFIG_BUCKET,
         "TF_VAR_query_dispatch_interval_cron": QUERY_DISPATCH_INTERVAL_CRON,
-        "TF_VAR_aws_region": AWS_REGION,
         "TF_VAR_cloud": cloud,
-        "TF_VAR_azure_region": AZURE_REGION,
     }
+
+    if cloud == "aws":
+        tf_env["TF_VAR_aws_region"] = AWS_REGION
+        tf_env["TF_VAR_azure_region"] = ""
+    elif cloud == "azure":
+        tf_env["TF_VAR_azure_region"] = AZURE_REGION
+        tf_env["TF_VAR_aws_region"] = ""
+
 
     my_env = os.environ.copy()
     for k, v in tf_env.items():

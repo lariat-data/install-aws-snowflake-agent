@@ -48,6 +48,14 @@ variable "lariat_snowflake_warehouse_name" {
   type = string
 }
 
+variable "lariat_snowflake_meta_db_name" {
+  type = string
+}
+
+variable "lariat_snowflake_meta_schema_name" {
+  type = string
+}
+
 variable "snowflake_account_locator" {
   type = string
 }

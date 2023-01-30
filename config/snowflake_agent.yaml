@@ -10,4 +10,4 @@ databases:
     - BANK_ACCOUNTS_3
 
 source_id:
-  snowflake_azure_central_us
+  snowflake_aws_us_east_2
