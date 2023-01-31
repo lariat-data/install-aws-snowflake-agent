@@ -6,6 +6,9 @@ import subprocess
 import snowflake.connector
 from ruamel.yaml import YAML
 
+from dotenv import load_dotenv
+load_dotenv()
+
 SNOWFLAKE_WAREHOUSE = os.getenv("SNOWFLAKE_WAREHOUSE")
 SNOWFLAKE_ACCOUNT_LOCATOR = os.getenv(
     "SNOWFLAKE_ACCOUNT_LOCATOR"
@@ -25,9 +28,6 @@ AWS_REGION = os.getenv("AWS_REGION")
 AZURE_REGION = os.getenv("AZURE_REGION")
 
 YAML_LOCATION = "config/snowflake_agent.yaml"
-
-from dotenv import load_dotenv
-load_dotenv()
 
 def validate_agent_config(cloud):
     yaml = YAML(typ="safe")
