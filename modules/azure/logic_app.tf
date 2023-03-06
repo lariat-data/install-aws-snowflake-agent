@@ -33,6 +33,7 @@ resource "azurerm_logic_app_trigger_recurrence" "lariat_daily_schema_pull" {
   logic_app_id = azurerm_logic_app_workflow.lariat_monitoring_workflow_schema_pull.id
   frequency    = "Day"
   interval     = 1
+  start_time =  timeadd(timestamp(), "7m")
 }
 
 

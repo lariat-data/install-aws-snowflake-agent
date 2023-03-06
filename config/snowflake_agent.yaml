@@ -1,7 +1,7 @@
 databases:
-  LARIAT_SNOWFLAKE_TEST:
-    PUBLIC:
-    - BANK_ACCOUNTS
+  LARIAT_SNOWFLAKE_TEST_2:
+    PUBLIC_2:
+    - BANK_ACCOUNTS_2
 
 source_id:
   qg
