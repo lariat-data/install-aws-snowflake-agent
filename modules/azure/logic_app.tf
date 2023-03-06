@@ -4,8 +4,8 @@
 
 resource "azurerm_logic_app_workflow" "lariat_monitoring_workflow_schema_pull" {
   name                = "lariat-monitoring-workflow-schema-pull"
-  location            = azurerm_resource_group.lariat_resource_group.location
-  resource_group_name = azurerm_resource_group.lariat_resource_group.name
+  location            = data.azurerm_resource_group.lariat_resource_group.location
+  resource_group_name = data.azurerm_resource_group.lariat_resource_group.name
 }
 
 resource "azurerm_logic_app_action_custom" "lariat_raw_schema_action" {
@@ -38,8 +38,8 @@ resource "azurerm_logic_app_trigger_recurrence" "lariat_daily_schema_pull" {
 
 resource "azurerm_logic_app_workflow" "lariat_monitoring_workflow_indicator_query" {
   name                = "lariat-monitoring-workflow-indicator-query"
-  location            = azurerm_resource_group.lariat_resource_group.location
-  resource_group_name = azurerm_resource_group.lariat_resource_group.name
+  location            = data.azurerm_resource_group.lariat_resource_group.location
+  resource_group_name = data.azurerm_resource_group.lariat_resource_group.name
 }
 
 resource "azurerm_logic_app_action_custom" "lariat_indicator_query_action" {
