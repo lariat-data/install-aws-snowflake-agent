@@ -23,6 +23,8 @@ terraform {
       source  = "hashicorp/null"
     }
   }
+
+  backend "s3" {}
 }
 
 locals {
