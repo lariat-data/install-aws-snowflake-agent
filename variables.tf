@@ -8,19 +8,21 @@ variable "lariat_application_key" {
 
 variable "aws_region" {
   type = string
-  default = "us-east-1"
 }
 
 variable "s3_query_results_bucket" {
   type = string
+  default = "lariat-snowflak-default-query-results"
 }
 
 variable "s3_agent_config_bucket" {
   type = string
+  default = "lariat-snowflake-default-config"
 }
 
 variable "query_dispatch_interval_cron" {
   type = string
+  default = "*/5 * * * *"
 }
 
 variable "lariat_vendor_tag_aws" {
@@ -30,6 +32,7 @@ variable "lariat_vendor_tag_aws" {
 
 variable "cloud" {
   type = string
+  default = "aws"
 }
 
 variable "snowflake_account" {
