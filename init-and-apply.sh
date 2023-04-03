@@ -17,10 +17,6 @@ terraform init -reconfigure \
 	      -backend-config="secret_key=$(aws configure get aws_secret_access_key --profile lariat)" \
 	      -backend-config="token=$(aws configure get aws_session_token --profile lariat)"
 
-echo "Applying Terraform..."
-TF_VAR_lariat_api_key=$LARIAT_API_KEY \
-	TF_VAR_lariat_application_key=$LARIAT_APPLICATION_KEY \
-        TF_VAR_snowflake_user=$SNOWFLAKE_USER \
-        TF_VAR_snowflake_default_warehouse=$SNOWFLAKE_DEFAULT_WAREHOUSE \
-	TF_VAR_aws_region=$AWS_REGION \
-       	terraform apply
+python3 snowflake_installer.py
+
+terraform apply

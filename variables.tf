@@ -22,7 +22,7 @@ variable "s3_agent_config_bucket" {
 
 variable "query_dispatch_interval_cron" {
   type = string
-  default = "*/5 * * * *"
+  default = "rate(5 minutes)"
 }
 
 variable "lariat_vendor_tag_aws" {
