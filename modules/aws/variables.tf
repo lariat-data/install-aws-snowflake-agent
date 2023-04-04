@@ -56,6 +56,6 @@ variable "lariat_snowflake_meta_schema_name" {
   type = string
 }
 
-variable "snowflake_account_locator" {
+variable "snowflake_account" {
   type = string
 }

@@ -2,7 +2,6 @@ provider "snowsql" {
   username = var.snowflake_user
   password = var.snowflake_password
   account = var.snowflake_account
-  region = var.snowflake_region
   warehouse = var.snowflake_default_warehouse
   role   = "accountadmin"
 }
@@ -11,7 +10,6 @@ provider "snowflake" {
   username = var.snowflake_user
   password = var.snowflake_password
   account = var.snowflake_account
-  region = var.snowflake_region
   warehouse = var.snowflake_default_warehouse
   role   = "accountadmin"
 }

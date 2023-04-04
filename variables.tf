@@ -39,10 +39,6 @@ variable "snowflake_account" {
   type = string
 }
 
-variable "snowflake_region" {
-  type = string
-}
-
 variable "snowflake_user" {
   type = string
 }

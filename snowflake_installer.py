@@ -1,4 +1,6 @@
 from prompt_toolkit import prompt, PromptSession
+from prompt_toolkit.completion import WordCompleter
+
 from snowflake.connector import connect
 from collections import defaultdict
 from ruamel.yaml import YAML
@@ -61,22 +63,22 @@ if __name__ == '__main__':
     snowflake_user = session.prompt("Snowflake Username: ")
     snowflake_pwd = session.prompt(f'Enter the password for Snowflake user {snowflake_user}: ', is_password=True)
 
+    new_line = '\n'
     dbs = get_snowflake_databases(snowflake_user, snowflake_account, snowflake_pwd)
-    filtered_dbs = session.prompt(f"We've detected the following databases in your Snowflake instance \n{','.join(dbs)}\nPlease input the databases you'd like to monitor with Lariat as a comma-separated list e.g. db1,db2: ", is_password=False)
+    filtered_dbs = session.prompt(f"\nWe've detected the following databases in your Snowflake instance \n{new_line.join(dbs)}\n\nPlease input the databases you'd like to monitor with Lariat as a comma-separated list e.g. db1,db2:\n", is_password=False, completer=WordCompleter(dbs))
     db_to_schema = {}
 
     for db in filtered_dbs.split(","):
         schemas = get_snowflake_schemas(snowflake_user, snowflake_account, snowflake_pwd, db)
-        filtered_schemas = session.prompt(f"We've detected the following schemas in your Snowflake database {db} \n{','.join(schemas)}\nPlease input the schemas you'd like to monitor with Lariat as a comma-separated list e.g. schema1,schema2: ", is_password=False)
+        filtered_schemas = session.prompt(f"\nWe've detected the following schemas in your Snowflake database {db} \n{new_line.join(schemas)}\n\nPlease input the schemas you'd like to monitor with Lariat as a comma-separated list e.g. schema1,schema2:\n", is_password=False, completer=WordCompleter(schemas))
 
-        db_to_schema = {db: filtered_schemas.split(",")}
-
+        db_to_schema[db] = filtered_schemas.split(",")
 
     db_schema_to_tables = defaultdict(dict)
     for db, schemas in db_to_schema.items():
         for schema in schemas:
             tables = get_snowflake_tables(snowflake_user, snowflake_account, snowflake_pwd, db, schema)
-            filtered_tables = session.prompt(f"We've detected the following tables in schema {schema} of database {db} \n{','.join(tables)}\nPlease input the tables you'd like to monitor with Lariat as a comma-separated list e.g. table1,table2: ", is_password=False)
+            filtered_tables = session.prompt(f"\nWe've detected the following tables in schema {schema} of database {db} \n{new_line.join(tables)}\n\nPlease input the tables you'd like to monitor with Lariat as a comma-separated list e.g. table1,table2:\n", is_password=False, completer=WordCompleter(tables))
             db_schema_to_tables[db][schema] = filtered_tables.split(",")
 
     yaml = YAML()

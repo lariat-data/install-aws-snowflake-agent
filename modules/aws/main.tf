@@ -181,7 +181,7 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
       LARIAT_ENDPOINT = "http://ingest.lariatdata.com/api"
       LARIAT_OUTPUT_BUCKET = "lariat-batch-agent-sink"
 
-      SNOWFLAKE_ACCOUNT =  "${var.snowflake_account_locator}"
+      SNOWFLAKE_ACCOUNT =  "${var.snowflake_account}"
       SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
       SNOWFLAKE_PASSWORD = "${var.lariat_snowflake_user_password}"
       SNOWFLAKE_WAREHOUSE = "${var.lariat_snowflake_warehouse_name}"
