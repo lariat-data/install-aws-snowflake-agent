@@ -19,4 +19,4 @@ terraform init -reconfigure \
 
 python3 snowflake_installer.py
 
-terraform apply
+terraform apply -auto-approve

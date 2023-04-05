@@ -10,6 +10,32 @@ import os
 import sys
 import subprocess
 
+def validate_agent_config():
+    yaml = YAML()
+
+    with open("snowflake_agent.yaml") as agent_config_file:
+        agent_config = yaml.load(agent_config_file)
+
+    assert "source_id" in agent_config
+    assert "databases" in agent_config
+    assert isinstance(agent_config["databases"], dict)
+
+    for db in agent_config["databases"].keys():
+        assert isinstance(agent_config["databases"][db], dict)
+
+        for schema_name in agent_config["databases"][db].keys():
+            assert isinstance(agent_config["databases"][db][schema_name], list)
+
+    print(f"Agent Config Validated: \n {json.dumps(agent_config, indent=4)}")
+
+def get_target_snowflake_databases():
+    yaml = YAML()
+
+    with open("snowflake_agent.yaml") as agent_config_file:
+        agent_config = yaml.load(agent_config_file)
+
+    return list(agent_config["databases"].keys())
+
 def get_snowflake_databases(username, account, pwd):
     print("Attempting to list snowflake databases")
     con = connect(
@@ -54,15 +80,7 @@ def get_snowflake_tables(username, account, pwd, db, schema):
 
     return tables
 
-
-if __name__ == '__main__':
-    session = PromptSession()
-    source_id = session.prompt("Enter a unique source ID for this integration (e.g. acmeco_snowflake_us_east_2): ")
-
-    snowflake_account = session.prompt("Snowflake Account identifier: ")
-    snowflake_user = session.prompt("Snowflake Username: ")
-    snowflake_pwd = session.prompt(f'Enter the password for Snowflake user {snowflake_user}: ', is_password=True)
-
+def prompt_for_config(session):
     new_line = '\n'
     dbs = get_snowflake_databases(snowflake_user, snowflake_account, snowflake_pwd)
     filtered_dbs = session.prompt(f"\nWe've detected the following databases in your Snowflake instance \n{new_line.join(dbs)}\n\nPlease input the databases you'd like to monitor with Lariat as a comma-separated list e.g. db1,db2:\n", is_password=False, completer=WordCompleter(dbs))
@@ -90,20 +108,32 @@ if __name__ == '__main__':
     with open("config/snowflake_agent.yaml", "wb") as f:
         yaml.dump(snowflake_config, f)
 
+if __name__ == '__main__':
+    session = PromptSession()
+    snowflake_account = session.prompt("Snowflake Account identifier: ")
+    snowflake_user = session.prompt("Snowflake Username: ")
+    snowflake_pwd = session.prompt(f'Enter the password for Snowflake user {snowflake_user}: ', is_password=True)
+
+    dbs = get_snowflake_databases(snowflake_user, snowflake_account, snowflake_pwd)
+    filtered_dbs = [db for db in dbs if db.upper() in get_target_snowflake_databases()]
+    if not filtered_dbs:
+        sys.exit("No valid database found for Lariat installation")
+
+    validate_agent_config()
+    print(f"Installing lariat to Snowflake Databases {filtered_dbs}")
+
     snowflake_default_wh = prompt('Enter a default warehouse to run Lariat installation commands (e.g. COMPUTE_WH): ')
+
     lariat_api_key = os.environ.get("LARIAT_API_KEY")
     lariat_application_key = os.environ.get("LARIAT_APPLICATION_KEY")
     aws_region = os.environ.get("AWS_REGION")
 
-    account_locator_split = snowflake_account.split(".", 1)
     tf_env = {
-        "snowflake_account": account_locator_split[0],
         "snowflake_default_warehouse": snowflake_default_wh,
         "snowflake_user": snowflake_user,
         "snowflake_password": snowflake_pwd,
-        "snowflake_databases": filtered_dbs.split(","),
-        "snowflake_account_locator": snowflake_account,
-        "snowflake_region": account_locator_split[1],
+        "snowflake_databases": filtered_dbs,
+        "snowflake_account": snowflake_account,
         "lariat_api_key": lariat_api_key,
         "lariat_application_key": lariat_application_key,
         "aws_region": aws_region,

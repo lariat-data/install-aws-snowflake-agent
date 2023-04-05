@@ -55,7 +55,3 @@ variable "snowflake_password" {
 variable "snowflake_databases" {
   type = list
 }
-
-variable "snowflake_account_locator" {
-  type = string
-}
