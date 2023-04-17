@@ -1,6 +1,4 @@
 #!/bin/sh
-set -e
-set -u
 
 # Get a local AWS profile for interacting with remote tfstate stored with Lariat
 echo "Initializing Installer..."
