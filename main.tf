@@ -23,6 +23,8 @@ terraform {
       source  = "hashicorp/null"
     }
   }
+
+  backend "s3" {}
 }
 
 locals {
@@ -84,6 +86,8 @@ module "aws_snowflake_lariat_installation" {
   query_dispatch_interval_cron = var.query_dispatch_interval_cron
   lariat_vendor_tag_aws = var.lariat_vendor_tag_aws
 
+  snowflake_account = var.snowflake_account
+
   lambda_create_user_arn = aws_iam_user.lambda_create_user[count.index].arn
   lambda_create_user_name = aws_iam_user.lambda_create_user[count.index].name
   lariat_snowflake_user_name = snowflake_user.lariat_snowflake_user.name
@@ -92,6 +96,4 @@ module "aws_snowflake_lariat_installation" {
 
   lariat_snowflake_meta_db_name = snowflake_database.lariat_meta_database.name
   lariat_snowflake_meta_schema_name = snowflake_schema.lariat_meta_db_schema.name
-
-  snowflake_account_locator = var.snowflake_account_locator
 }

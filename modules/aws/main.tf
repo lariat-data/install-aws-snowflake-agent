@@ -93,9 +93,9 @@ resource "aws_s3_bucket" "lariat_snowflake_query_results_bucket" {
 resource "aws_s3_object" "lariat_snowflake_agent_config" {
   bucket = aws_s3_bucket.lariat_snowflake_agent_config_bucket.bucket
   key    = "snowflake_agent.yaml"
-  source = "config/snowflake_agent.yaml"
+  source = "snowflake_agent.yaml"
 
-  etag = filemd5("config/snowflake_agent.yaml")
+  etag = filemd5("snowflake_agent.yaml")
 }
 
 data "aws_iam_policy_document" "lariat_snowflake_agent_repository_policy" {
@@ -181,7 +181,7 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
       LARIAT_ENDPOINT = "http://ingest.lariatdata.com/api"
       LARIAT_OUTPUT_BUCKET = "lariat-batch-agent-sink"
 
-      SNOWFLAKE_ACCOUNT =  "${var.snowflake_account_locator}"
+      SNOWFLAKE_ACCOUNT =  "${var.snowflake_account}"
       SNOWFLAKE_USER = "${var.lariat_snowflake_user_name}"
       SNOWFLAKE_PASSWORD = "${var.lariat_snowflake_user_password}"
       SNOWFLAKE_WAREHOUSE = "${var.lariat_snowflake_warehouse_name}"
