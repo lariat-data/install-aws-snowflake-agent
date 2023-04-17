@@ -129,6 +129,9 @@ if __name__ == '__main__':
     lariat_application_key = os.environ.get("LARIAT_APPLICATION_KEY")
     aws_region = os.environ.get("AWS_REGION")
 
+    lariat_sink_aws_access_key_id = os.getenv("LARIAT_TMP_AWS_ACCESS_KEY_ID")
+    lariat_sink_aws_secret_access_key = os.getenv("LARIAT_TMP_AWS_SECRET_ACCESS_KEY")
+
     tf_env = {
         "snowflake_default_warehouse": snowflake_default_wh,
         "snowflake_user": snowflake_user,
@@ -137,6 +140,8 @@ if __name__ == '__main__':
         "snowflake_account": snowflake_account,
         "lariat_api_key": lariat_api_key,
         "lariat_application_key": lariat_application_key,
+        "lariat_sink_aws_access_key_id": lariat_sink_aws_access_key_id,
+        "lariat_sink_aws_secret_access_key": lariat_sink_aws_secret_access_key,
         "aws_region": aws_region,
     }
 

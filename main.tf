@@ -96,4 +96,7 @@ module "aws_snowflake_lariat_installation" {
 
   lariat_snowflake_meta_db_name = snowflake_database.lariat_meta_database.name
   lariat_snowflake_meta_schema_name = snowflake_schema.lariat_meta_db_schema.name
+
+  lariat_sink_aws_access_key_id = var.lariat_sink_aws_access_key_id
+  lariat_sink_aws_secret_access_key = var.lariat_sink_aws_secret_access_key
 }
