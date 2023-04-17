@@ -23,6 +23,7 @@ jobs:
         with:
           context: .
           push: true
+          no-cache: true
           tags: |
             lariatdata/install-aws-snowflake-agent:latest
             lariatdata/install-aws-snowflake-agent:${{ github.sha }}
