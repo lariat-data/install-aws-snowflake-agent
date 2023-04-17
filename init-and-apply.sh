@@ -1,7 +1,9 @@
 #!/bin/sh
+set -e
+set -u
 
 # Get a local AWS profile for interacting with remote tfstate stored with Lariat
-echo "Storing local lariat profile..."
+echo "Initializing Installer..."
 python3 scripts/kms/decrypt_and_store_remote_tfstate_profile.py ${AWS_ACCOUNT_ID} > lariat_profile.json
 
 cat lariat_profile.json | jq -r .AccessKeyId | xargs aws configure set aws_access_key_id $1 --profile lariat
@@ -19,4 +21,6 @@ terraform init -reconfigure \
 
 python3 snowflake_installer.py
 
+echo "Running installation..."
 terraform apply -auto-approve
+echo "Installation successful!"

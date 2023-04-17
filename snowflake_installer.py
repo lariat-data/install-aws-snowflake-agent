@@ -117,7 +117,8 @@ if __name__ == '__main__':
     dbs = get_snowflake_databases(snowflake_user, snowflake_account, snowflake_pwd)
     filtered_dbs = [db for db in dbs if db.upper() in get_target_snowflake_databases()]
     if not filtered_dbs:
-        sys.exit("No valid database found for Lariat installation")
+        print("No valid database found for Lariat installation")
+        sys.exit(1)
 
     validate_agent_config()
     print(f"Installing lariat to Snowflake Databases {filtered_dbs}")

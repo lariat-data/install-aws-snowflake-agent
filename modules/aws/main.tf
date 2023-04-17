@@ -93,9 +93,9 @@ resource "aws_s3_bucket" "lariat_snowflake_query_results_bucket" {
 resource "aws_s3_object" "lariat_snowflake_agent_config" {
   bucket = aws_s3_bucket.lariat_snowflake_agent_config_bucket.bucket
   key    = "snowflake_agent.yaml"
-  source = "config/snowflake_agent.yaml"
+  source = "snowflake_agent.yaml"
 
-  etag = filemd5("config/snowflake_agent.yaml")
+  etag = filemd5("snowflake_agent.yaml")
 }
 
 data "aws_iam_policy_document" "lariat_snowflake_agent_repository_policy" {
