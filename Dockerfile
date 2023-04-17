@@ -1,7 +1,6 @@
 FROM --platform=linux/amd64 lariatdata/install-aws-base:latest
 
 RUN apk add --no-cache gcc g++ libffi-dev
-RUN echo 1
 RUN pip3 install prompt-toolkit
 RUN pip3 install --no-deps ruamel.yaml
 
