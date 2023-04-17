@@ -6,6 +6,14 @@ variable "lariat_application_key" {
   type = string
 }
 
+variable "lariat_sink_aws_access_key_id" {
+  type = string
+}
+
+variable "lariat_sink_aws_secret_access_key" {
+  type = string
+}
+
 variable "aws_region" {
   type = string
   default = "us-east-1"
