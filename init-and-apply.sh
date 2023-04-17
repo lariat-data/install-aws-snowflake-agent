@@ -1,4 +1,8 @@
 #!/bin/sh
+set -e
+
+echo "Validating AWS Credentials..."
+python3 scripts/validate_aws_credentials.py ${AWS_ACCOUNT_ID}
 
 # Get a local AWS profile for interacting with remote tfstate stored with Lariat
 echo "Initializing Installer..."
