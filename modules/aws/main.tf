@@ -191,6 +191,8 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
 
       LARIAT_SINK_AWS_ACCESS_KEY_ID = "${var.lariat_sink_aws_access_key_id}"
       LARIAT_SINK_AWS_SECRET_ACCESS_KEY = "${var.lariat_sink_aws_secret_access_key}"
+
+      LARIAT_CLOUD_ACCOUNT_ID = "${data.aws_caller_identity.current.account_id}"
     }
   }
 }
