@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-
 echo "Validating AWS Credentials..."
 python3 scripts/validate_aws_credentials.py ${AWS_ACCOUNT_ID}
 
@@ -8,9 +7,9 @@ python3 scripts/validate_aws_credentials.py ${AWS_ACCOUNT_ID}
 echo "Initializing Installer..."
 python3 scripts/kms/decrypt_and_store_remote_tfstate_profile.py ${AWS_ACCOUNT_ID} > lariat_profile.json
 
-cat lariat_profile.json | jq -r .AccessKeyId | xargs aws configure set aws_access_key_id $1 --profile lariat
-cat lariat_profile.json | jq -r .SecretAccessKey | xargs aws configure set aws_secret_access_key $1 --profile lariat
-cat lariat_profile.json | jq -r .SessionToken | xargs aws configure set aws_session_token $1 --profile lariat
+cat lariat_profile.json | jq -r .AccessKeyId | xargs -I {} aws configure set aws_access_key_id {} --profile lariat
+cat lariat_profile.json | jq -r .SecretAccessKey | xargs -I {} aws configure set aws_secret_access_key {} --profile lariat
+cat lariat_profile.json | jq -r .SessionToken | xargs -I {} aws configure set aws_session_token {} --profile lariat
 
 echo "Initializing Terraform..."
 terraform init -reconfigure \
@@ -23,6 +22,12 @@ terraform init -reconfigure \
 
 python3 snowflake_installer.py
 
-echo "Running installation..."
-terraform apply -auto-approve
-echo "Installation successful!"
+if [ -n "$1" ] && [ "$1" = "uninstall" ]; then
+    echo "Uninstalling Lariat..."
+    terraform destroy -auto-approve
+    echo "Lariat uninstalled!"
+else
+    echo "Running installation..."
+    terraform apply -auto-approve
+    echo "Installation successful!"
+fi
