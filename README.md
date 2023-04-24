@@ -1,3 +1,6 @@
+![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lariatdata/install-aws-snowflake-agent/latest)
+
+
 ## Intro
 
 [Lariat Data](www.lariatdata.com) is a Continuous Data Quality Monitoring Platform to ensure data products don't break even as business logic, input data and infrastructure change.
