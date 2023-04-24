@@ -8,7 +8,7 @@ WORKDIR /workspace
 
 COPY . /workspace
 
-RUN pip install snowflake_connector_python-3.0.2-py3-none-any.whl
+RUN pip install /workspace/vendor/snowflake_connector_python-3.0.2-py3-none-any.whl
 
 RUN chmod +x /workspace/init-and-apply.sh
 
