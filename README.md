@@ -25,6 +25,9 @@ This installer creates:
 This image requires the following configuration values to be injected as environment variables:
 - `AWS_REGION` - The target AWS region for the installation. Generally, this should be the same AWS region where Snowflake is deployed. e.g. `us-east-1`
 - `AWS_ACCOUNT_ID` - A 12-digit AWS Account Identifier
+- `AWS_ACCESS_KEY_ID` - The AWS Access Key ID for a user with privileges to run the installation
+- `AWS_SECRET_ACCESS_KEY` - The AWS Secret Access Key for a user with privileges to run the installation
+- `AWS_SESSION_TOKEN` - (_optional_) The AWS Session Token for the same user, if required to authenticate with AWS
 - `LARIAT_API_KEY` - A Lariat API Key. You can retrieve this from the [`API Keys`](https://app.lariatdata.com/user/keys) page in your Lariat account
 - `LARIAT_APPLICATION_KEY` - A Lariat Application Key. You can retrieve this from the [`API Keys`](https://app.lariatdata.com/user/keys) page in your Lariat account
 
@@ -47,9 +50,17 @@ docker run -it \
 --mount type=bind,source=/path/to/my/snowflake_agent.yaml,target=/workspace/snowflake_agent.yaml,readonly \
 -e AWS_REGION=<my_aws_region> \
 -e AWS_ACCOUNT_ID=<aws_account_id> \
+-e AWS_ACCESS_KEY_ID=<aws_access_key_id> \
+-e AWS_SECRET_ACCESS_KEY=<aws_secret_access_key> \
 -e LARIAT_API_KEY=<lariat_api_key> \
 -e LARIAT_APPLICATION_KEY=<lariat_application_key> \
 lariatdata/install-aws-snowflake-agent:latest
+```
+
+If you have [awscli](https://aws.amazon.com/cli/) installed, you may prefer to pass in your AWS credentials via command substitution, for example:
+```
+-e AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+-e AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
 ```
 
 ### Uninstall the agent
@@ -60,6 +71,8 @@ docker run -it \
 --mount type=bind,source=/path/to/my/snowflake_agent.yaml,target=/workspace/snowflake_agent.yaml,readonly \
 -e AWS_REGION=<my_aws_region> \
 -e AWS_ACCOUNT_ID=<aws_account_id> \
+-e AWS_ACCESS_KEY_ID=<aws_access_key_id> \
+-e AWS_SECRET_ACCESS_KEY=<aws_secret_access_key> \
 -e LARIAT_API_KEY=<lariat_api_key> \
 -e LARIAT_APPLICATION_KEY=<lariat_application_key> \
 lariatdata/install-aws-snowflake-agent:latest uninstall
