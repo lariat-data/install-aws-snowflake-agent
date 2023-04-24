@@ -1,8 +1,10 @@
-### Intro
+## Intro
+
+[Lariat Data](www.lariatdata.com) is a Continuous Data Quality Monitoring Platform to ensure data products don't break even as business logic, input data and infrastructure change.
 
 This repository contains the Docker image and dependencies for the Lariat agent installer for Snowflake on AWS
 
-### How it works
+## How it works
 This installer uses Terraform, with remote `.tfstate` files, to create and manage infrastructure in the target cloud account and data source.
 
 This installer creates:
@@ -12,14 +14,14 @@ This installer creates:
 - An S3 bucket for storing YAML configuration
 - IAM Users, Roles and Policies to support the above operations.
 
-### Structure
+## Structure
 - The Entrypoint for Lariat installations is [init-and-apply.sh](init-and-apply.sh). This script contacts Lariat for the latest Terraform state (which may be empty), and proceeds to work against this state.
 
 - Snowflake infrastructure-as-code definitions live under [snowflake.tf](snowflake.tf)
 
 - AWS infrastructure-as-code definitions live under [modules/aws/main.tf](modules/aws/main.tf)
 
-### Building locally
+## Building locally
 You may build and run a local version of this image using `docker`.
 
 ```docker
