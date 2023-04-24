@@ -43,12 +43,12 @@ docker build -t <my_image_name> .
 The required configuration values may be passed in during `docker run`, for example:
 
 ```docker
-docker run -it
---mount type=bind,source=/path/to/my/snowflake_agent.yaml,target=/workspace/snowflake_agent.yaml,readonly
--e AWS_REGION=<my_aws_region>
--e AWS_ACCOUNT_ID=<aws_account_id>
--e LARIAT_API_KEY=<lariat_api_key>
--e LARIAT_APPLICATION_KEY=<lariat_application_key>
+docker run -it \
+--mount type=bind,source=/path/to/my/snowflake_agent.yaml,target=/workspace/snowflake_agent.yaml,readonly \
+-e AWS_REGION=<my_aws_region> \
+-e AWS_ACCOUNT_ID=<aws_account_id> \
+-e LARIAT_API_KEY=<lariat_api_key> \
+-e LARIAT_APPLICATION_KEY=<lariat_application_key> \
 lariatdata/install-aws-snowflake-agent:latest
 ```
 
@@ -56,11 +56,11 @@ lariatdata/install-aws-snowflake-agent:latest
 The required configuration values may be passed in during `docker run`, for example:
 
 ```docker
-docker run -it
---mount type=bind,source=/path/to/my/snowflake_agent.yaml,target=/workspace/snowflake_agent.yaml,readonly
--e AWS_REGION=<my_aws_region>
--e AWS_ACCOUNT_ID=<aws_account_id>
--e LARIAT_API_KEY=<lariat_api_key>
--e LARIAT_APPLICATION_KEY=<lariat_application_key>
+docker run -it \
+--mount type=bind,source=/path/to/my/snowflake_agent.yaml,target=/workspace/snowflake_agent.yaml,readonly \
+-e AWS_REGION=<my_aws_region> \
+-e AWS_ACCOUNT_ID=<aws_account_id> \
+-e LARIAT_API_KEY=<lariat_api_key> \
+-e LARIAT_APPLICATION_KEY=<lariat_application_key> \
 lariatdata/install-aws-snowflake-agent:latest uninstall
 ```
