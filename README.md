@@ -1,4 +1,4 @@
-![Docker Image Version (tag latest semver)](https://img.shields.io/docker/v/lariatdata/install-aws-snowflake-agent/latest)
+[<img src="https://img.shields.io/docker/v/lariatdata/install-aws-snowflake-agent/latest">](https://hub.docker.com/repository/docker/lariatdata/install-aws-snowflake-agent)
 
 
 ## Intro
