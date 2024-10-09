@@ -158,8 +158,6 @@ resource "time_sleep" "wait_30_seconds" {
 resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
   depends_on = [time_sleep.wait_30_seconds]
 
-  provider = aws.lambda_create_user
-
   function_name = "lariat-snowflake-monitoring-lambda"
   image_uri = "358681817243.dkr.ecr.${var.aws_region}.amazonaws.com/lariat-snowflake-agent:latest"
   role = aws_iam_role.lariat_snowflake_monitoring_lambda_role.arn
