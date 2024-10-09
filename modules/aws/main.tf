@@ -165,10 +165,6 @@ resource "aws_lambda_function" "lariat_snowflake_monitoring_lambda" {
   memory_size = 512
   timeout = 900
 
-  tags = {
-    VendorLariat = local.lariat_vendor_tag_aws
-  }
-
   environment {
     variables = {
       S3_QUERY_RESULTS_BUCKET = aws_s3_bucket.lariat_snowflake_query_results_bucket.bucket
